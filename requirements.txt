@@ -1,0 +1,10 @@
+```txt
+Django>=5.2
+pandas>=2.2
+openpyxl>=3.1
+numpy>=2.0
+python-dateutil>=2.9
+pytz>=2025.1
+tzdata>=2025.1
+et-xmlfile>=2.0
+```

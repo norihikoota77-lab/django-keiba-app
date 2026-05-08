@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>競馬スコアラー - 採点システム</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-slate-50 font-sans text-slate-800 min-h-screen flex flex-col justify-between"
+  >
+    <header
+      class="bg-white shadow-sm py-4 px-6 flex items-center justify-between"
+    >
+      <div class="flex items-center space-x-3">
+        <span class="bg-red-600 text-white p-2 rounded-lg text-lg font-bold"
+          >🐎 KS</span
+        >
+        <h1 class="text-xl font-bold tracking-tight">
+          競馬スコアラー - データ採点システム
+        </h1>
+      </div>
+      <div class="text-sm text-slate-400 hidden sm:block">
+        <i class="fas fa-user-circle mr-1"></i> Pikoさんのマイページ
+      </div>
+    </header>
+
+    <main class="container mx-auto max-w-2xl px-4 py-8 flex-grow">
+      <div
+        class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-slate-100"
+      >
+        <div class="mb-8 text-center">
+          <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
+            採点データのアップロード
+          </h2>
+          <p class="text-sm text-slate-500">
+            正解マスタとユーザーの解答データをアップロードして、自動的に結果を採点・可視化します。
+          </p>
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+          {% csrf_token %}
+
+          <div class="space-y-2">
+            <label class="block text-3xl font-semibold text-slate-700">
+              <i class="fas fa-key text-red-500 mr-1"></i> 正解マスタファイル
+              (Excel)
+            </label>
+            <div
+              id="correct-dropzone"
+              class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-red-500 transition-colors bg-slate-50 cursor-pointer"
+              onclick="document.getElementById('id_correct_file').click()"
+            >
+              <div class="space-y-1 text-center pointer-events-none">
+                <i class="fas fa-file-excel text-3xl text-green-600 mb-2"></i>
+                <div class="text-lg text-slate-600">
+                  <span class="font-medium text-red-600 hover:text-red-500"
+                    >ファイルを選択</span
+                  >
+                  <p class="pl-1 inline">またはドラッグ＆ドロップ</p>
+                </div>
+                <p class="text-lg text-slate-400">
+                  .xlsx, .xls 形式 (最大 10MB)
+                </p>
+                <p
+                  id="correct-file-name"
+                  class="text-lg font-bold text-red-600 mt-3"
+                ></p>
+              </div>
+            </div>
+            <input
+              id="id_correct_file"
+              name="correct_file"
+              type="file"
+              class="hidden"
+              required
+              onchange="displayFileName('id_correct_file', 'correct-file-name')"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <label class="block text-3xl font-semibold text-slate-700">
+              <i class="fas fa-user-edit text-blue-500 mr-1"></i>
+              ユーザー解答データ (Excel)
+            </label>
+            <div
+              id="user-dropzone"
+              class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-red-500 transition-colors bg-slate-50 cursor-pointer"
+              onclick="document.getElementById('id_user_file').click()"
+            >
+              <div class="space-y-1 text-center pointer-events-none">
+                <i class="fas fa-file-upload text-3xl text-blue-600 mb-2"></i>
+                <div class="text-1g text-slate-600">
+                  <span class="font-medium text-red-600 hover:text-red-500"
+                    >ファイルを選択</span
+                  >
+                  <p class="pl-1 inline">またはドラッグ＆ドロップ</p>
+                </div>
+                <p class="text-lg text-slate-400">
+                  .xlsx, .xls 形式 (最大 10MB)
+                </p>
+                <p
+                  id="user-file-name"
+                  class="text-lg font-bold text-blue-600 mt-3"
+                ></p>
+              </div>
+            </div>
+            <input
+              id="id_user_file"
+              name="user_file"
+              type="file"
+              class="hidden"
+              required
+              onchange="displayFileName('id_user_file', 'user-file-name')"
+            />
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              class="w-full flex justify-center items-center bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            >
+              <i class="fas fa-check-circle mr-2"></i> 採点スタート
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <footer
+      class="bg-white border-t border-slate-100 py-4 text-center text-xs text-slate-400"
+    >
+      &copy; 2026 Piko's Portfolio. All Rights Reserved.
+    </footer>
+
+    <script>
+      function displayFileName(inputId, nameId) {
+        const fileInput = document.getElementById(inputId);
+        const fileNameArea = document.getElementById(nameId);
+        if (fileInput.files.length > 0) {
+          fileNameArea.textContent = `選択されたファイル: ${fileInput.files[0].name}`;
+        } else {
+          fileNameArea.textContent = "";
+        }
+      }
+
+      // ドラッグ＆ドロップ用イベントの初期化
+      ["correct", "user"].forEach((type) => {
+        const dropzone = document.getElementById(`${type}-dropzone`);
+        const input = document.getElementById(`id_${type}_file`);
+
+        ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+          dropzone.addEventListener(
+            eventName,
+            (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            },
+            false,
+          );
+        });
+
+        dropzone.addEventListener(
+          "dragover",
+          () => {
+            dropzone.classList.add("border-red-500", "bg-red-50");
+          },
+          false,
+        );
+
+        dropzone.addEventListener(
+          "dragleave",
+          () => {
+            dropzone.classList.remove("border-red-500", "bg-red-50");
+          },
+          false,
+        );
+
+        dropzone.addEventListener(
+          "drop",
+          (e) => {
+            dropzone.classList.remove("border-red-500", "bg-red-50");
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            if (files.length > 0) {
+              input.files = files;
+              displayFileName(`id_${type}_file`, `${type}-file-name`);
+            }
+          },
+          false,
+        );
+      });
+    </script>
+  </body>
+</html>

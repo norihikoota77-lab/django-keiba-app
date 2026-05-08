@@ -1,0 +1,72 @@
+.report-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* テーブル全体 */
+.report-table .dataframe {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: center;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+}
+
+/* ヘッダー */
+.report-table .dataframe th {
+  background-color: #f8fafc;
+  padding: 14px 16px;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 2px solid #e2e8f0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* セル */
+.report-table .dataframe td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+  text-align: center;
+  vertical-align: middle;
+  transition: background-color 0.2s;
+}
+
+/* 偶数行 */
+.report-table .dataframe tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+/* hover */
+.report-table .dataframe tr:hover {
+  background-color: #eef2ff;
+}
+
+/* 自分の解答列 */
+.report-table .dataframe td:nth-child(2),
+.report-table .dataframe td:nth-child(6),
+.report-table .dataframe th:nth-child(2),
+.report-table .dataframe th:nth-child(6) {
+  background-color: #fff8dc;
+}
+
+/* ○ */
+.ok {
+  color: #dc2626;
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: inline-block;
+  min-width: 24px;
+}
+
+/* ✖ */
+.ng {
+  color: #2563eb;
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: inline-block;
+  min-width: 24px;
+}

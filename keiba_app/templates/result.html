@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>採点結果 - 競馬スコアラー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/result.css' %}" />
+  </head>
+  <body
+    class="bg-slate-50 font-sans text-slate-800 text-lg min-h-screen flex flex-col justify-between"
+  >
+    <header
+      class="bg-white shadow-sm py-5 px-6 flex items-center justify-between"
+    >
+      <div class="flex items-center space-x-3">
+        <span class="bg-red-600 text-white p-3 rounded-lg text-lg font-bold"
+          >🐎 KS</span
+        >
+        <h1 class="text-xl font-bold tracking-tight">
+          競馬スコアラー - 採点結果
+        </h1>
+      </div>
+      <div class="text-sm text-slate-400 hidden sm:block">
+        <i class="fas fa-user-circle mr-1"></i> Pikoさんのマイページ
+      </div>
+    </header>
+
+    <main class="container mx-auto max-w-3xl px-4 py-8 flex-grow">
+      <div
+        class="bg-white rounded-2xl shadow-lg p-6 md:p-10 border border-slate-100"
+      >
+        <div
+          class="mb-8 p-5 bg-indigo-50/70 border border-indigo-200 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p class="text-base font-bold text-indigo-900">
+            <span class="text-indigo-600">タイトル：</span>{{ correct_title }}
+          </p>
+          <p class="text-base font-bold text-indigo-900">
+            <span class="text-indigo-600">氏名：</span>{{ user_name }}
+          </p>
+        </div>
+
+        <div class="mb-8 text-center">
+          <h2 class="text-3xl font-extrabold text-slate-900 mb-2">採点結果</h2>
+          <p class="text-base text-slate-500">あなたのスコアと判定結果です。</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-8">
+          <div
+            class="bg-slate-50 p-6 rounded-xl text-center border border-slate-200"
+          >
+            <p class="text-sm text-slate-400 mb-1">スコア</p>
+            <p class="text-4xl font-extrabold text-slate-900">
+              {{ score }}/{{ valid_count }}
+            </p>
+          </div>
+          <div
+            class="bg-slate-50 p-6 rounded-xl text-center border border-slate-200"
+          >
+            <p class="text-sm text-slate-400 mb-1">正答率</p>
+            <p class="text-4xl font-extrabold text-red-600">
+              {{ percentage }}%
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="mb-8 p-5 rounded-xl {% if color == 'green' %}bg-green-50 text-green-700 border-green-200{% else %}bg-red-50 text-red-700 border-red-200{% if color == 'yellow' %}bg-yellow-50 text-yellow-700 border-yellow-200{% endif %}{% endif %} border flex items-center justify-between"
+        >
+          <div class="flex items-center">
+            <i class="fas fa-flag-checkered mr-4 text-2xl"></i>
+            <div class="text-base">
+              <span class="text-1 font-bold">判定: {{ msg }}</span>
+              <p class="text-l font-bold opacity-75 mt-1">
+                評価ランク: {{ rank }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8 border-t border-slate-100 pt-6">
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">
+            <i class="fas fa-video text-red-500 mr-1"></i> フィードバック動画
+          </h3>
+          <video
+            autoplay
+            muted
+            playsinline
+            controls
+            class="w-full rounded-xl shadow-md"
+          >
+            <source src="{% static video_file %}" type="video/mp4" />
+            お使いのブラウザは動画タグをサポートしていません。
+          </video>
+        </div>
+
+        <div class="mb-8 border-t border-slate-100 pt-6">
+          <h3 class="text-lg font-semibold text-slate-800 mb-4">
+            <i class="fas fa-table text-indigo-500 mr-1"></i>
+            レポート内容プレビュー
+          </h3>
+
+          <div
+            class="report-table overflow-x-auto border border-slate-200 rounded-xl shadow-sm"
+          >
+            {{ report_html|safe }}
+          </div>
+        </div>
+
+        <div class="space-y-4 text-base">
+          <a
+            href="{% url 'download_report' report_file_name %}"
+            class="w-full flex justify-center items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-xl transition-all duration-200 shadow-md"
+          >
+            <i class="fas fa-file-excel mr-2"></i> レポートをダウンロード
+          </a>
+
+          <a
+            href="{% url 'index' %}"
+            class="w-full flex justify-center items-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-4 px-4 rounded-xl transition-all duration-200"
+          >
+            <i class="fas fa-redo-alt mr-2"></i> 新しいデータを採点する
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer
+      class="bg-white border-t border-slate-100 py-5 text-center text-sm text-slate-400"
+    >
+      &copy; 2026 Piko's Portfolio. All Rights Reserved.
+    </footer>
+  </body>
+</html>
