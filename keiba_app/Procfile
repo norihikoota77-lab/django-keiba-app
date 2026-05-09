@@ -1,0 +1,1 @@
+web: gunicorn keiba_app.wsgi
