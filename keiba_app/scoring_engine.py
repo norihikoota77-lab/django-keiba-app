@@ -120,12 +120,12 @@ class ScoringEngine:
                     u_ans if u_ans else "未記入",
                     c_ans if is_valid else "-",
                     (
-                      '<span class="ok">⭕</span>'
-                        if (is_valid and is_correct)
-                        else (
-                         '<span class="ng">✖</span>'
-                         if is_valid
-                         else "-"
+                      "⭕"
+                       if (is_valid and is_correct)
+                       else (
+                            "✖"
+                            if is_valid
+                            else "-"
                         )
                     ),
                 ]
@@ -155,25 +155,63 @@ class ScoringEngine:
     def export_excel(self, output_file: str) -> None:
         """
         採点結果を Excel ファイルに書き出す。
-        左右 2 列ブロック（各 20 行）に最大 40 問を配置する。
+        左右2ブロック表示 + 中央空列付き。
         """
+
         all_qs = sorted(self.correct_map.keys())
 
-        # 20 行 × 2 ブロックの空 DataFrame を作成
+        # 左右2ブロック + 中央空列
         report_df = pd.DataFrame(
             index=range(20),
-            columns=["問題", "解答", "正解", "判定"] * 2,
+            columns=[
+                "問題", "解答", "正解", "判定",
+                "",
+                "問題", "解答", "正解", "判定"
+            ],
         )
+
         for i in range(min(len(all_qs), 40)):
-            col_offset = (i // 20) * 4
-            report_df.iloc[i % 20, col_offset : col_offset + 4] = self.rows_data[i]
+
+            # 左: A〜D
+            # 右: F〜I
+            col_offset = 0 if i < 20 else 5
+
+            report_df.iloc[
+                i % 20,
+                col_offset : col_offset + 4
+            ] = self.rows_data[i]
 
         with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
-            report_df.to_excel(writer, sheet_name="レース結果", index=False)
+
+            report_df.to_excel(
+                writer,
+                sheet_name="レース結果",
+                index=False
+            )
+
             ws = writer.sheets["レース結果"]
+
+            # スタイル適用
             self._apply_excel_styles(ws, all_qs)
 
+            # 列幅調整
+            ws.column_dimensions["A"].width = 10
+            ws.column_dimensions["B"].width = 10
+            ws.column_dimensions["C"].width = 10
+            ws.column_dimensions["D"].width = 10
+
+            # 中央空列
+            ws.column_dimensions["E"].width = 5
+
+            ws.column_dimensions["F"].width = 10
+            ws.column_dimensions["G"].width = 10
+            ws.column_dimensions["H"].width = 10
+            ws.column_dimensions["I"].width = 10
+
     def _apply_excel_styles(self, ws, all_qs: list) -> None:
+        """
+        Excelスタイル適用
+        """
 
         header_fill = PatternFill(
             start_color="DA1F28",
@@ -193,10 +231,9 @@ class ScoringEngine:
             fill_type="solid"
         )
 
-        # 追加
         answer_fill = PatternFill(
-            start_color="FFF3CD",
-            end_color="FFF3CD",
+            start_color="FFF8DC",
+            end_color="FFF8DC",
             fill_type="solid"
         )
 
@@ -208,31 +245,60 @@ class ScoringEngine:
         )
 
         for r in range(1, 22):
-            for c in range(1, 11):
+
+            for c in range(1, 10):
+
                 cell = ws.cell(row=r, column=c)
+
+                # 中央空列(E列)
+                if c == 5:
+                    continue
+
                 cell.border = thin_border
                 cell.alignment = Alignment(horizontal="center")
 
+                # ヘッダー
                 if r == 1:
-                    # ヘッダー行
-                    cell.fill = header_fill
-                    cell.font = Font(color="FFFFFF", bold=True)
-                else:
-                    # データ行：左右ブロックのインデックスを算出
-                    q_idx = ((c - 1) // 5) * 20 + (r - 2)
-                    if q_idx < len(all_qs):
-                        is_ok, is_valid = self.judgments[all_qs[q_idx]]
-                        if is_valid:
-                            # 解答列だけ専用カラー
-                            if c in (2, 7):
-                                cell.fill = answer_fill
-                            else:
-                                cell.fill = ok_fill if is_ok else ng_fill
 
-                            # 判定列の文字色
-                            if c in (4, 9):
-                                cell.font = Font(
-                                    color="0000FF" if is_ok else "FF0000",
-                                    bold=True,
-                                )
-  
+                    cell.fill = header_fill
+
+                    cell.font = Font(
+                        color="FFFFFF",
+                        bold=True
+                    )
+
+                else:
+
+                    # 左右ブロック対応
+                    q_idx = (
+                        0 if c <= 4 else 20
+                    ) + (r - 2)
+
+                    if q_idx < len(all_qs):
+
+                        is_ok, is_valid = self.judgments[
+                            all_qs[q_idx]
+                        ]
+
+                        # 解答列(B/G)
+                        if c in (2, 7):
+                            cell.fill = answer_fill
+
+                        # その他セル
+                        elif is_valid:
+                            cell.fill = (
+                                ok_fill if is_ok else ng_fill
+                            )
+
+                        # 判定列
+                        if c in (4, 9):
+
+                            cell.font = Font(
+                                color=(
+                                    "0000FF"
+                                    if is_ok
+                                    else "FF0000"
+                                ),
+                                bold=True,
+                                size=14
+                            )

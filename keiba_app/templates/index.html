@@ -141,10 +141,25 @@
       function displayFileName(inputId, nameId) {
         const fileInput = document.getElementById(inputId);
         const fileNameArea = document.getElementById(nameId);
+        // inputIdから "id_" と "_file" を除いてドロップゾーンのIDを特定
+        const type = inputId.replace("id_", "").replace("_file", "");
+        const dropzone = document.getElementById(`${type}-dropzone`);
+
+        // タイプ別の色設定（正解は赤、ユーザーは青）
+        const activeBg = type === "correct" ? "bg-red-50" : "bg-blue-50";
+        const activeBorder =
+          type === "correct" ? "border-red-500" : "border-blue-500";
+
         if (fileInput.files.length > 0) {
           fileNameArea.textContent = `選択されたファイル: ${fileInput.files[0].name}`;
+          // 背景色と枠線色を適用
+          dropzone.classList.add(activeBg, activeBorder);
+          dropzone.classList.remove("bg-slate-50", "border-slate-300");
         } else {
           fileNameArea.textContent = "";
+          // 元の状態に戻す
+          dropzone.classList.remove(activeBg, activeBorder);
+          dropzone.classList.add("bg-slate-50", "border-slate-300");
         }
       }
 
@@ -152,6 +167,9 @@
       ["correct", "user"].forEach((type) => {
         const dropzone = document.getElementById(`${type}-dropzone`);
         const input = document.getElementById(`id_${type}_file`);
+        const activeBg = type === "correct" ? "bg-red-50" : "bg-blue-50";
+        const activeBorder =
+          type === "correct" ? "border-red-500" : "border-blue-500";
 
         ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
           dropzone.addEventListener(
@@ -164,18 +182,22 @@
           );
         });
 
+        // ドラッグ中のスタイル
         dropzone.addEventListener(
           "dragover",
           () => {
-            dropzone.classList.add("border-red-500", "bg-red-50");
+            dropzone.classList.add(activeBorder, activeBg);
           },
           false,
         );
 
+        // ドラッグが外れた時（ファイルが未選択なら戻す）
         dropzone.addEventListener(
           "dragleave",
           () => {
-            dropzone.classList.remove("border-red-500", "bg-red-50");
+            if (input.files.length === 0) {
+              dropzone.classList.remove(activeBorder, activeBg);
+            }
           },
           false,
         );
@@ -183,7 +205,6 @@
         dropzone.addEventListener(
           "drop",
           (e) => {
-            dropzone.classList.remove("border-red-500", "bg-red-50");
             const dt = e.dataTransfer;
             const files = dt.files;
 

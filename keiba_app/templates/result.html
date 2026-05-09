@@ -65,13 +65,13 @@
           >
             <p class="text-sm text-slate-400 mb-1">正答率</p>
             <p class="text-4xl font-extrabold text-red-600">
-              {{ percentage }}%
+              {{ percentage|floatformat:2}}%
             </p>
           </div>
         </div>
 
         <div
-          class="mb-8 p-5 rounded-xl {% if color == 'green' %}bg-green-50 text-green-700 border-green-200{% else %}bg-red-50 text-red-700 border-red-200{% if color == 'yellow' %}bg-yellow-50 text-yellow-700 border-yellow-200{% endif %}{% endif %} border flex items-center justify-between"
+          class="mb-8 p-5 rounded-xl border flex items-center justify-between {% if color == 'green' %} bg-green-50 text-green-700 border-green-200 {% elif color == 'yellow' %} bg-yellow-50 text-yellow-700 border-yellow-200 {% else %} bg-red-50 text-red-700 border-red-200 {% endif %}"
         >
           <div class="flex items-center">
             <i class="fas fa-flag-checkered mr-4 text-2xl"></i>
@@ -116,7 +116,7 @@
         <div class="space-y-4 text-base">
           <a
             href="{% url 'download_report' report_file_name %}"
-            class="w-full flex justify-center items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-4 rounded-xl transition-all duration-200 shadow-md"
+            class="w-full flex justify-center items-center bg-blue-600 hover:bg-green-700 text-white font-bold py-4 px-4 rounded-xl transition-all duration-200 shadow-md"
           >
             <i class="fas fa-file-excel mr-2"></i> レポートをダウンロード
           </a>

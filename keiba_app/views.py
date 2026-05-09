@@ -98,7 +98,27 @@ def index(request):
                 if os.path.exists(output_file):
                     try:
                         df = pd.read_excel(output_file)
-                        df.columns = [str(col).split('.')[0] for col in df.columns]
+
+                        # 空列名を空文字へ
+                        df.columns = [
+                            "" if "Unnamed" in str(col) else str(col).split(".")[0]
+                            for col in df.columns
+                        ]   
+
+                        # 空セルを空文字へ
+                        df = df.fillna("")
+ 
+                        # float → int文字列化
+                        df = df.map(
+                            lambda x: str(int(x))
+                            if isinstance(x, float) and x.is_integer()
+                            else x
+                        )
+ 
+                        # HTML装飾
+                        df = df.replace("⭕", '<span class="ok">⭕</span>')
+                        df = df.replace("✖", '<span class="ng">✖</span>')
+
                         report_html = df.to_html(
                             classes='dataframe',
                             border=0,
@@ -106,6 +126,8 @@ def index(request):
                             justify="center",
                             escape=False
                         )
+                        
+
                         report_html = report_html.replace('✖', '<span class="text-blue-600 font-bold">✖</span>')
                     except Exception as e:
                         report_html = f"<p class='text-red-500'>プレビュー読み込みエラー: {e}</p>"
