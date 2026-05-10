@@ -1,5 +1,13 @@
-django
-pandas
-openpyxl
-gunicorn
-contourpy
+# Webアプリケーションの核
+Django==6.0.3
+gunicorn==26.0.0
+whitenoise==6.9.0
+
+# データ処理・解析（競馬スコア計算用）
+pandas==2.3.3
+numpy==2.4.0
+openpyxl==3.1.5
+contourpy==1.3.3
+
+# その他
+python-dotenv==1.2.1
