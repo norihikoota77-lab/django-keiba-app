@@ -30,6 +30,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -104,26 +105,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-# 開発環境の静的ファイルの場所
+# 静的ファイルの設定
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
-
-# サーバー公開時にファイルを一箇所に集める場所（デプロイに必須）
+# 本番環境で画像やCSSを集める場所
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# --- 追記：本番環境でCSSを配信するための設定 ---
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# メディアファイル（動画やエクセル）の設定
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
+# IDの設定
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-# 最初は True でOK。動いたら False に変更。
+# デバッグモード（後でFalseにします）
 DEBUG = True
