@@ -89,3 +89,29 @@
   font-weight: bold;
   font-size: 1.1rem;
 }
+/* ===== モバイル端末（画面幅768px以下）用の調整 ===== */
+@media (max-width: 768px) {
+  .report-table table {
+    /* 固定幅を解除して、中身に合わせて伸縮させる */
+    table-layout: auto !important;
+    font-size: 0.75rem !important; /* 文字を小さくして収める */
+  }
+
+  .report-table th,
+  .report-table td {
+    padding: 4px 2px !important; /* 余白を最小限にする */
+    word-break: break-all; /* 長い単語で改行を許す */
+  }
+
+  /* 中央の空白列（5列目）をスマホでは非表示にしてスペースを稼ぐ */
+  .report-table td:nth-child(5),
+  .report-table th:nth-child(5) {
+    display: none;
+  }
+
+  /* 判定の ⭕ ✖ を少し小さく調整 */
+  .ok,
+  .ng {
+    font-size: 0.9rem !important;
+  }
+}
