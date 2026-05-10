@@ -1,9 +1,9 @@
 /* ===== テーブル全体 ===== */
 
 .report-table table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: auto !important;
   font-size: 1.08rem;
 }
 
@@ -11,10 +11,10 @@
 
 .report-table th,
 .report-table td {
-  border: 1px solid #e2e8f0;
-  padding: 4px 12px;
+  border: 1px solid #e2e8f0 !important;
+  padding: 8px 12px !important;
   line-height: 1.2;
-  text-align: center;
+  text-align: center !important;
   vertical-align: middle;
 }
 
